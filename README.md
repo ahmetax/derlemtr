@@ -1,19 +1,19 @@
 # DerlemTr
 
-## DerlemTr projesinin yeniden canladırılması
+## DerlemTr projesinin yeniden canlandırılması
 
 🇹🇷 Yeniden Başlatıldı! (Kasım 2025)
 
-Bu yeni çalışmada, geçerliliği denetlenmiş sözcüklerin yer aldığı bir dosyayı doğrudan paylaşmak yerine, böyle bir listeyi oluşturmanın yöntemleri tüm aşamalarıyla birlikte paylaşacağız.
+Bu yeni çalışmada, geçerliliği denetlenmiş sözcüklerin yer aldığı bir dosyayı doğrudan paylaşmak yerine, böyle bir listeyi oluşturmanın yöntemlerini tüm aşamalarıyla birlikte paylaşacağız.
 
 Eski deponun orijinal içeriğini, eski-versiyon klasöründe bulabilirsiniz.
 
 
-# A VERIFIED TURKISH WORDLIST
-
 <p align="center">
   <img src="https://github.com/ahmetax/derlemtr/blob/master/images/gemini_generated_image.jpg" alt="Derlemtr Proje Tanıtım Infografiği" width="70%">
 </p>
+
+# A VERIFIED TURKISH WORDLIST
 
 In this project, we're creating a list of words that are still commonly used in current Turkish. I won't share my existing 2 million-word list here. Github has strict file size restrictions. It's certainly possible to bypass this, but I don't think it's very user-friendly. So, instead of providing you with a ready-made list, I'll share tools that will allow you to create a Turkish vocabulary similar to the one I have.
 
@@ -35,8 +35,8 @@ To speed up the coding process, I'm using Claude, Gemini, and Grok as coding con
 
 1. Clone this repo:
 ```bash
-git clone https://github.com/ahmetax/Checked-Turkish-Word-List.git
-cd Checked-Turkish-Word-List
+git clone https://github.com/ahmetax/derlemtr.git
+cd derlemtr
 ```
 I recommend using a virtual environment: (The following codes are for Ubuntu 24.04. Adapt them to your own system.)
 ```bash
@@ -131,8 +131,8 @@ Kelime analizlerimizin çekirdeğinde Zemberek kütüphanesinin son sürümü (z
 
 1. Bu repoyu klonla:
    ```bash
-   git clone https://github.com/ahmetax/Checked-Turkish-Word-List.git
-   cd Checked-Turkish-Word-List
+   git clone https://github.com/ahmetax/derlemtr.git
+   cd derlemtr
    ```
    Sanal ortam kullanmanızı öneririm: (Aşağıdaki kodlar Ubuntu 24.04 içindir. Kendi sisteminize göre uyarlayın.)
    ```bash
