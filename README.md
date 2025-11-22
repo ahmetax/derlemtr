@@ -12,7 +12,7 @@ Eski deponun orijinal içeriğini, eski-versiyon klasöründe bulabilirsiniz.
 # A VERIFIED TURKISH WORDLIST
 
 <p align="center">
-  <img src="https://github.com/ahmetax/derlemtr/blob/main/images/Gemini_Generated_Imagejpg" alt="Derlemtr Proje Tanıtım Infografiği" width="70%">
+  <img src="https://github.com/ahmetax/derlemtr/blob/main/images/gemini_generated_image.jpg" alt="Derlemtr Proje Tanıtım Infografiği" width="70%">
 </p>
 
 
