@@ -2,7 +2,7 @@
 
 ## DerlemTr projesinin yeniden canlandırılması
 
-🇹🇷 Yeniden Başlatıldı! (Kasım 2025)
+🇹🇷 Yeniden Başlatıldı! (Kasım 2025) - Project Re-started! (November 2025)
 
 Bu yeni çalışmada, geçerliliği denetlenmiş sözcüklerin yer aldığı bir dosyayı doğrudan paylaşmak yerine, böyle bir listeyi oluşturmanın yöntemlerini tüm aşamalarıyla birlikte paylaşacağız.
 
@@ -28,8 +28,8 @@ To speed up the coding process, I'm using Claude, Gemini, and Grok as coding con
 4. Downloading the updated zemberek-full.jar file (Completed)
 5. Obtaining yeni_kesin_turkce_adaylari.txt from tr_corpus_wiki.txt (Completed)
 6. Creating lexicon.db database (Completed)
-7. Preparing collected words to be imported into the database
-
+7. Preparing collected words to be imported into the database (Completed)
+8. Cloning of the AKTA Project and scanning of Turkish documents (Completed)
 
 ## Using the Word Collector
 
@@ -101,6 +101,20 @@ python build_trigram_model.py
    python db_setup.py
    ```
 
+## Cloning the AKTA Project
+
+Clone the project at https://github.com/ahmetax/akta to your computer.
+
+Update the INPUT_FOLDER variable in the akta_tara.py file to the project's location on your computer and run the akta_tara.py script. (This process will take hours.)
+The output file will be saved as akta_kesin_turkce_adaylari.txt.
+You can add the contents of this file to your master list (tr_lexicon.txt) to be imported into the database.
+
+bash
+git clone https://github.com/ahmetax/akta.git
+
+python akta_tara.py
+```
+
 
 # DENETLENMİŞ TÜRKÇE SÖZCÜK DAĞARCIĞI
 
@@ -126,6 +140,7 @@ Kelime analizlerimizin çekirdeğinde Zemberek kütüphanesinin son sürümü (z
 5. tr_corpus_wiki.txt dosyasından yeni_kesin_turkce_adaylari.txt dosyasının elde edilmesi (Tamamlandı)
 6. tr_lexicon.db veritabanının oluşturulması (Tamamlandı)
 7. Toplanan kelimelerin veritabanına aktarılmak üzere hazırlanması
+8. AKTA Projesinin klonlanması ve Türkçe belgelerin taranması
 
 ## Kelime Toplayıcı Kullanımı
 
@@ -209,5 +224,17 @@ betiğini kullanabilirsiniz.
    python db_setup.py
    ```
    
-   
+## AKTA Projesinin klonlanması   
 
+https://github.com/ahmetax/akta adresindeki projeyi bilgisayarınıza klonlayın.
+akta_tara.py dosyasındaki INPUT_FOLDER değişkenini, projenin bilgisayarınızdaki konumuna 
+uygun olarak güncelleyin ve akta_tara.py betiğini çalıştırın. (İşlemler, saatler boyu sürecektir.)
+Çıktı dosyası, akta_kesin_turkce_adaylari.txt olarak kaydedilir.
+Bu dosyanın içeriğini veritabanına aktarılmak üzere ana listenize (tr_lexicon.txt) ekleyebilirsiniz.
+
+   ```bash
+   git clone https://github.com/ahmetax/akta.git
+   
+   python akta_tara.py
+   ```
+   

@@ -20,6 +20,7 @@ def create_tables():
             aciklama TEXT,
             attempted INTEGER DEFAULT 0, 
             failed INTEGER DEFAULT 0,
+            onay INTEGER DEFAULT 0,
             UNIQUE(kok, tip, koken) -- Tekrarlayan kök girişlerini engellemek için (tamamen aynı ise)
         );
     ''')
