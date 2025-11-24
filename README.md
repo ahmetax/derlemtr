@@ -109,11 +109,11 @@ Update the INPUT_FOLDER variable in the akta_tara.py file to the project's locat
 The output file will be saved as akta_kesin_turkce_adaylari.txt.
 You can add the contents of this file to your master list (tr_lexicon.txt) to be imported into the database.
 
-bash
-git clone https://github.com/ahmetax/akta.git
+   ```bash
+   git clone https://github.com/ahmetax/akta.git
 
-python akta_tara.py
-```
+   python akta_tara.py
+   ```
 
 
 # DENETLENMİŞ TÜRKÇE SÖZCÜK DAĞARCIĞI
