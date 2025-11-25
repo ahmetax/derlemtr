@@ -115,6 +115,20 @@ You can add the contents of this file to your master list (tr_lexicon.txt) to be
    python akta_tara.py
    ```
 
+## Adding Words to the sozluk (dictionary) Table
+
+Using the kelimeler table in the lexicon.db database, groups the word roots and transfers them to the dictionary table.
+
+DROPS the old sozluk table to create a clean start, recreates it, and correctly transfers the roots, type, and detail information from the analysis field from the kelimeler (words) table.
+
+MUST BE USED WITH CAUTION! 
+YOU CAN LOSE SOME VALUABLE DATA!
+
+```bash
+python lexicon_initializer.py
+```
+
+
 
 # DENETLENMİŞ TÜRKÇE SÖZCÜK DAĞARCIĞI
 
@@ -236,5 +250,19 @@ Bu dosyanın içeriğini veritabanına aktarılmak üzere ana listenize (tr_lexi
    git clone https://github.com/ahmetax/akta.git
    
    python akta_tara.py
+   ```
+   
+## sozluk Tablosuna Kelimelerin Eklenmesi
+
+lexicon.db veritabanında bulunan kelimeler tablosunu kullanarak 
+kökleri gruplar ve sozluk tablosuna aktarır.
+Temiz bir başlangıç yapmak için eski sozluk tablosunu siler (DROP), 
+yeniden oluşturur ve kelimeler tablosundaki kökleri, tip ve detay bilgisini 
+analiz alanından doğru şekilde aktarır.
+DİKKATLİ BİR ŞEKİLDE KULLANILMASI GEREKİR! 
+BAZI ÖNEMLİ BİLGİLERİ KAYBEDEBİLİRSİNİZ!
+
+   ```bash
+   python sozluk_initializer.py
    ```
    
