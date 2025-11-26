@@ -130,7 +130,25 @@ YOU CAN LOSE SOME VALUABLE DATA!
 ```bash
 python lexicon_initializer.py
 ```
+## Adding Geographic Location Names to the Dictionary
 
+### geocoding_adres.py
+We obtain location names from zemberek sources.
+If you have a more comprehensive list, you can use that as well.
+Input: sozlukler/zemberek_tr/locations-tr.dict
+Output: cografi_adres_sozluk.json
+
+```bash
+python geocoding_adres.py
+```
+
+### geo_bulk_aktarim.py
+Information scanned through the Geocoding API and saved in the cografi_adres.json file is transferred to the database in bulk using this script.
+Input: cografi_adres_sozluk.json
+
+```bash
+python geo_bulk_aktarim.py
+```
 
 
 # DENETLENMİŞ TÜRKÇE SÖZCÜK DAĞARCIĞI
