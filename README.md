@@ -30,6 +30,9 @@ To speed up the coding process, I'm using Claude, Gemini, and Grok as coding con
 6. Creating lexicon.db database (Completed)
 7. Preparing collected words to be imported into the database (Completed)
 8. Cloning of the AKTA Project and scanning of Turkish documents (Completed)
+9. Adding the sozluk (dictionary) table to the lexicon.db database (Completed)
+10. Adding the roots from the kelimeler (words) table to the dictionary table (Completed)
+11. Adding the Turkish geographical place names to the dictionary table (Completed)
 
 ## Using the Word Collector
 
@@ -153,8 +156,12 @@ Kelime analizlerimizin çekirdeğinde Zemberek kütüphanesinin son sürümü (z
 4. Güncel zemberek-full.jar dosyasının indirilmesi (Tamamlandı)
 5. tr_corpus_wiki.txt dosyasından yeni_kesin_turkce_adaylari.txt dosyasının elde edilmesi (Tamamlandı)
 6. tr_lexicon.db veritabanının oluşturulması (Tamamlandı)
-7. Toplanan kelimelerin veritabanına aktarılmak üzere hazırlanması
-8. AKTA Projesinin klonlanması ve Türkçe belgelerin taranması
+7. Toplanan kelimelerin veritabanına aktarılmak üzere hazırlanması (Tamamlandı)
+8. AKTA Projesinin klonlanması ve Türkçe belgelerin taranması (Tamamlandı)
+9. lexicon.db veritabanına sozluk tablosunun eklenmesi (Tamamlandı)
+10. kelimeler tablosundaki kelime köklerinin sozluk tablosuna eklenmei (Tamamlandı)
+11. Coğrafik yer adlarının sozluk tablosuna eklenmesi (Tamamlandı)
+
 
 ## Kelime Toplayıcı Kullanımı
 
@@ -265,4 +272,28 @@ BAZI ÖNEMLİ BİLGİLERİ KAYBEDEBİLİRSİNİZ!
    ```bash
    python sozluk_initializer.py
    ```
-   
+
+## Coğrafik Yer Adlarının Sözlüğe Eklenmesi
+
+### geocoding_adres.py
+Yer adlarını zemberek kaynaklarından elde ediyoruz.
+Elinizde daha zengin bir liste varsa, onu da kullanabilirsiniz.
+	Girdi: sozlukler/zemberek_tr/locations-tr.dict
+	Çıktı: cografi_adres_sozluk.json
+	
+   ```bash
+   python geocoding_adres.py
+   ```	
+
+### geo_bulk_aktarim.py
+Geocoding API'si üzerinden taranan ve cografi_adres.json
+dosyasına kaydedilen bilgiler, toplu işlemlerle veritabanına
+bu betik sayesinde aktarılmaktadır.
+    Girdi: cografi_adres_sozluk.json
+	
+   ```bash
+   python geo_bulk_aktarim.py
+   ```	
+
+
+
