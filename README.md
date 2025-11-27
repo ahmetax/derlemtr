@@ -104,6 +104,57 @@ python build_trigram_model.py
    python db_setup.py
    ```
 
+### Preparing the data to be loaded into the words table 
+
+The words in the file yeni_turkce_adaylari.txt are copied to tr_lexicon.txt. 
+If the number of words in the tr_lexicon.txt file is more than 300 thousand, 
+It should be splitted into chunk files with splitter.py.
+
+### Chunk the tr_lexicon.txt file 
+
+```bash 
+python splitter.py 
+``` 
+
+It splits the tr_lexicon.txt file into chunk_1.txt, chunk_2.txt, etc. 
+The number of chunks is defined by NUM_CHUNKS. 
+The number of words contained in each Chunk must be approximately 300 thousand words. 
+Determine the NUM_CHUNKS value accordingly.
+
+
+### Creation of analysis_results.tsv file from the chunk files 
+
+```bash 
+python data_loader.py 
+``` 
+
+Using chunk_*.txt (singular words) files, it creates the analysis_results.tsv() file. 
+Uses jpype1 and zemberek-full.jar. 
+The purpose of this script is to integrate file operations and database operations
+to ease multiprocessing processes by separating them from each other.
+
+
+### Uploading the analysis_results.tsv file to the database 
+
+```bash 
+python db_loader.py 
+``` 
+
+You can view previously generated data using the analysis_results.tsv file. 
+transfers it to the words table.
+
+### mini_loader.py for small word additions 
+
+```bash 
+python mini_loader.py 
+``` 
+
+Analyzing the words in the yeni_adaylar.txt file with Zemberek, 
+saves the results in the kelşmeler (words) table. 
+This script is a small sized version of the integrated data_loader.py and db_loader.py scripts. 
+Useful when using small datasets.
+
+
 ## Cloning the AKTA Project
 
 Clone the project at https://github.com/ahmetax/akta to your computer.
@@ -262,6 +313,58 @@ betiğini kullanabilirsiniz.
    ```bash
    python db_setup.py
    ```
+
+### Verilerin kelimeler tablosuna yüklenmek üzere hazırlanması
+
+   yeni_turkce_adaylari.txt dosyasındaki kelimeler tr_lexicon.txt isimli 
+   dosyaya kaydedilir.
+   tr_lexicon.txt dosyasındaki kelime sayısı 300 binden fazlaysa, 
+   splitter.py ile chunk dosyalarına bölünmelidir.
+
+### tr_lexicon.txt dosyasının parçalara (chunk) ayrılması
+
+   ```bash
+   python splitter.py
+   ```
+   tr_lexicon.txt dosyasını chunk_1.txt, chunk_2.txt, vb parçalara ayırır.
+   Chunk (parça) sayısı NUM_CHUNKS ile tanımlanır.
+   Her bir Chunk'ın içerdiği kelime sayısı yaklaşık 300 bin kelime
+   civarında olmalıdır. NUM_CHUNKS değerini ona göre belirleyin.	
+
+
+### Chunk dosyalarından analysis_results.tsv dosyasının oluşturulması
+
+   ```bash
+   python data_loader.py
+   ```
+
+   chunk_*.txt (tekil kelimeler)  dosyalarını kullanarak 
+   analysis_results.tsv () dosyasını oluşturur.
+   jpype1 ve zemberek-full.jar kullanır.
+   Bu betiğin amacı, zemberek işlemleri ile veritabanı işlemlerini
+   birbirinden ayırarak multiprocessing süreçlerini rahatlatmaktır.
+
+
+### analysis_results.tsv dosyasının veritabanına yüklenmesi
+
+   ```bash
+   python db_loader.py
+   ```
+
+   analysis_results.tsv dosyasını kullanarak önceden üretilmiş verileri
+   kelimeler tablosuna aktarır.
+
+### Küçük çaplı kelime eklemeleri için mini_loader.py
+
+   ```bash
+   python mini_loader.py
+   ```
+
+   yeni_adaylar.txt dosyasında yer alan kelimeleri Zemberek ile analiz edip,
+   sonuçları kelimeler tablosuna kaydeder.
+   Bu betik, data_loader.py ve db_loader.py betiklerinin küçük boyutlu ve
+   entegre edilmiş halidir. Küçük verisetleri kullanırken işe yarar.
+
    
 ## AKTA Projesinin klonlanması   
 
