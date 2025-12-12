@@ -2,6 +2,7 @@
 # Amaç: Yüksek Performanslı ve Hata Toleranslı Zemberek Yükleyici.
 # Çözüm: Multiprocessing Pool ile analiz ve sonuçları TSV dosyasına kaydetme.
 # analysis_results.tsv dosyasını oluşturur.
+# kelimeler tablosuna hata kolonu eklendi
 # Gemini (Verimli SQLite Veri Yükleme Stratejisi)
 
 import os
@@ -105,13 +106,14 @@ class DBManager:
                 yontem TEXT,
                 aciklama TEXT,
                 onay INTEGER DEFAULT 0,
+                hata INTEGER DEFAULT 0,
                 CHECK (LENGTH(kelime) > 0)
             );
         """
         try:
             with sqlite3.connect(self.db_path) as conn:
                 conn.cursor().executescript(script)
-            print("-> Veritabanı yapısı başarıyla oluşturuldu.")
+            print("-> Veritabanı sozluk tablosu başarıyla oluşturuldu/kontrol edildi.")
         except sqlite3.Error as e:
             print(f"Veritabanı kurulum hatası: {e}")
 

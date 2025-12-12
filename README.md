@@ -33,6 +33,8 @@ To speed up the coding process, I'm using Claude, Gemini, and Grok as coding con
 9. Adding the sozluk (dictionary) table to the lexicon.db database (Completed)
 10. Adding the roots from the kelimeler (words) table to the dictionary table (Completed)
 11. Adding the Turkish geographical place names to the dictionary table (Completed)
+12. Filling in the meaning, origin, and source columns using TDK and Wiktionary resources.
+13. Filling in the meaning, origin, and source columns using TDK, Wiktionary, and Nisanyan resources.
 
 ## Using the Word Collector
 
@@ -230,6 +232,8 @@ Kelime analizlerimizin çekirdeğinde Zemberek kütüphanesinin son sürümü (z
 9. lexicon.db veritabanına sozluk tablosunun eklenmesi (Tamamlandı)
 10. kelimeler tablosundaki kelime köklerinin sozluk tablosuna eklenmei (Tamamlandı)
 11. Coğrafik yer adlarının sozluk tablosuna eklenmesi (Tamamlandı)
+12. TDK ve Wiktionary kaynaklarını kullanarak anlam, koken ve kaynak kolonlarının doldurulması
+13. TDK, Wiktionary ve Nisanyan kaynaklarını kullanarak anlam, koken ve kaynak kolonlarının doldurulması
 
 
 ## Kelime Toplayıcı Kullanımı

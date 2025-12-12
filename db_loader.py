@@ -26,6 +26,7 @@ def setup_database(db_path: str):
             yontem TEXT,
             aciklama TEXT,
             onay INTEGER DEFAULT 0,
+            hata INTEGER DEFAULT 0,
             CHECK (LENGTH(kelime) > 0)
         );
     """
