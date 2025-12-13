@@ -16,6 +16,7 @@ def create_tables():
             tip TEXT, -- isim, fiil, ozel_isim, terim, vb.
             koken TEXT, -- Turkce, Arapca, Farsca, Ingilizce, vb.
             kaynak TEXT, -- TDK, Wiktionary, Manuel, vb.
+            kullanim TEXT, -- güncel, eskimiş, ağız, argo, vb
             anlam TEXT,
             aciklama TEXT,
             attempted INTEGER DEFAULT 0, 
@@ -36,7 +37,8 @@ def create_tables():
             analiz TEXT,
             yontem TEXT, -- zemberek, manuel, baska_arac, vb.
             aciklama TEXT,
-            onay INTEGER DEFAULT 0
+            onay INTEGER DEFAULT 0,
+            CHECK (LENGTH(kelime) > 0)
         );
     ''')
     
