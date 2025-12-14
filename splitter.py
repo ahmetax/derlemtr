@@ -1,6 +1,6 @@
 # splitter.py
 INPUT_FILE = 'tr_lexicon.txt'
-NUM_CHUNKS = 9
+NUM_CHUNKS = 10
 
 def split_file():
     print(f"'{INPUT_FILE}' dosyası okunuyor...")
