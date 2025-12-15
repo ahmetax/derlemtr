@@ -83,9 +83,13 @@ def analyze_word(word: str) -> Optional[Tuple]:
         ekler = format_morphemes(best_result)
         analiz = str(best_result.formatLong()) # Tam Zemberek analiz formatı
         yontem = 'zemberek'
-        
-        # kelime, lemma, kok, ekler, analiz, yontem (kelimeler tablosunun ilk 6 kolonu)
-        return (kelime, lemma, kok, ekler, analiz, yontem)
+        detay = analiz.split(' ')[0].strip()
+        detaylar = detay.split(':')
+        detay = detaylar[0].strip()[1:]
+        tip = detaylar[1].strip()[:-1]
+         
+        # kelime, lemma, kok, ekler, analiz, yontem, tip, detay (kelimeler tablosunun ilk 6 kolonu + 2)
+        return (kelime, lemma, kok, ekler, analiz, yontem, tip, detay)
 
     except Exception as e:
         # Analiz sırasında JVM hatası/çökmesi oluşursa (nadir)
@@ -94,7 +98,6 @@ def analyze_word(word: str) -> Optional[Tuple]:
 
 def ensure_kelimeler_table_exists():
     """'kelimeler' tablosunu db_loader.py şemasına göre oluşturur (Yoksa)."""
-    """ hata, tip, detay,skor kolonları eklendi"""
     script = """
         CREATE TABLE IF NOT EXISTS kelimeler (
             id INTEGER PRIMARY KEY,
@@ -109,7 +112,7 @@ def ensure_kelimeler_table_exists():
             hata INTEGER DEFAULT 0,
             tip TEXT,
             detay TEXT,
-            skor INTEGER DEFAULT 0,            
+            skor INTEGER DEFAULT 0,
             CHECK (LENGTH(kelime) > 0)
         );
     """
@@ -184,14 +187,16 @@ def main():
         # Eğer 'kelime' kolonu çakışırsa (yani kelime zaten varsa), 
         # o kaydın 'lemma', 'kok', 'ekler', 'analiz' ve 'yontem' kolonları GÜNCELLENİR.
         sql_upsert = """
-        INSERT INTO kelimeler (kelime, lemma, kok, ekler, analiz, yontem)
-        VALUES (?, ?, ?, ?, ?, ?)
+        INSERT INTO kelimeler (kelime, lemma, kok, ekler, analiz, yontem, tip, detay)
+        VALUES (?, ?, ?, ?, ?, ?, ?, ?)
         ON CONFLICT(kelime) DO UPDATE SET
             lemma = excluded.lemma,
             kok = excluded.kok,
             ekler = excluded.ekler,
             analiz = excluded.analiz,
-            yontem = excluded.yontem;
+            yontem = excluded.yontem,
+            tip = excluded.tip,
+            detay = excluded.detay;
         """
         
         cursor.executemany(sql_upsert, analysis_data_for_db)
