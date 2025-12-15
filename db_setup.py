@@ -38,6 +38,10 @@ def create_tables():
             yontem TEXT, -- zemberek, manuel, baska_arac, vb.
             aciklama TEXT,
             onay INTEGER DEFAULT 0,
+            hata INTEGER DEFAULT 0,
+            tip TEXT,
+            detay TEXT,
+            skor INTEGER DEFAULT 0,
             CHECK (LENGTH(kelime) > 0)
         );
     ''')
