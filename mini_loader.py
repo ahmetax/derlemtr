@@ -94,6 +94,7 @@ def analyze_word(word: str) -> Optional[Tuple]:
 
 def ensure_kelimeler_table_exists():
     """'kelimeler' tablosunu db_loader.py şemasına göre oluşturur (Yoksa)."""
+    """ hata, tip, detay,skor kolonları eklendi"""
     script = """
         CREATE TABLE IF NOT EXISTS kelimeler (
             id INTEGER PRIMARY KEY,
@@ -105,6 +106,10 @@ def ensure_kelimeler_table_exists():
             yontem TEXT,
             aciklama TEXT,
             onay INTEGER DEFAULT 0,
+            hata INTEGER DEFAULT 0,
+            tip TEXT,
+            detay TEXT,
+            skor INTEGER DEFAULT 0,            
             CHECK (LENGTH(kelime) > 0)
         );
     """
@@ -161,7 +166,8 @@ def main():
     success_count = len(analysis_data_for_db)
     print(f"-> Analiz tamamlandı. Başarılı analiz sayısı: {success_count}")
 
-    # 5. Veritabanına Doğrudan Toplu Yazma
+
+    # 5. Veritabanına Doğrudan Toplu Yazma (UPSERT)
     if not analysis_data_for_db:
         print("-> Veritabanına yazılacak analiz sonucu yok.")
         return
@@ -174,18 +180,27 @@ def main():
         cursor.execute("PRAGMA journal_mode = WAL")
         cursor.execute("PRAGMA synchronous = OFF") 
 
-        # INSERT OR IGNORE ile sadece mevcut olmayan kelimeler eklenir
-        sql_insert = """
-        INSERT OR IGNORE INTO kelimeler (kelime, lemma, kok, ekler, analiz, yontem)
+        # YENİ UPSERT SORGUSU (ON CONFLICT):
+        # Eğer 'kelime' kolonu çakışırsa (yani kelime zaten varsa), 
+        # o kaydın 'lemma', 'kok', 'ekler', 'analiz' ve 'yontem' kolonları GÜNCELLENİR.
+        sql_upsert = """
+        INSERT INTO kelimeler (kelime, lemma, kok, ekler, analiz, yontem)
         VALUES (?, ?, ?, ?, ?, ?)
+        ON CONFLICT(kelime) DO UPDATE SET
+            lemma = excluded.lemma,
+            kok = excluded.kok,
+            ekler = excluded.ekler,
+            analiz = excluded.analiz,
+            yontem = excluded.yontem;
         """
         
-        cursor.executemany(sql_insert, analysis_data_for_db)
-        inserted_count = cursor.rowcount
+        cursor.executemany(sql_upsert, analysis_data_for_db)
+        # rows_affected, hem eklenen hem de güncellenen satır sayısını içerir.
+        rows_affected = cursor.rowcount
         conn.commit()
         
-        print(f"\n✅ Başarıyla veritabanına eklenen yeni (non-duplicate) kayıt sayısı: {inserted_count}")
-        print(f"   (Toplam analiz edilen kayıt: {success_count})")
+        # Eklenen ve güncellenen satır sayısını ayrıştırmak zordur, bu yüzden toplam etkiyi raporlayalım.
+        print(f"\n✅ Başarıyla veritabanına eklenen/güncellenen toplam kayıt sayısı: {rows_affected}")
         
     except sqlite3.Error as e:
         print(f"HATA: Veritabanına yazma sırasında sorun oluştu: {e}", file=sys.stderr)
@@ -193,7 +208,7 @@ def main():
     finally:
         if conn:
             conn.close()
-            
+
     end_time = time.time()
     print(f"--- ✅ İŞLEM TAMAMLANDI! Toplam süre: {end_time - start_time:.2f} saniye. ---")
 
