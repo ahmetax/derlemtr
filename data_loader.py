@@ -107,6 +107,9 @@ class DBManager:
                 aciklama TEXT,
                 onay INTEGER DEFAULT 0,
                 hata INTEGER DEFAULT 0,
+                tip TEXT,
+                detay TEXT,
+                skor INTEGER DEFAULT 0,
                 CHECK (LENGTH(kelime) > 0)
             );
         """
