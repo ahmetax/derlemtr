@@ -39,9 +39,9 @@ def create_tables():
             aciklama TEXT,
             onay INTEGER DEFAULT 0,
             hata INTEGER DEFAULT 0,
-            tip TEXT,
-            detay TEXT,
-            skor INTEGER DEFAULT 0,
+            tip TEXT,	-- from analiz
+            detay TEXT,	-- from analiz
+            skor INTEGER DEFAULT 0,	-- frequency from related docs
             CHECK (LENGTH(kelime) > 0)
         );
     ''')
