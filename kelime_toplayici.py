@@ -86,7 +86,8 @@ def dosya_oku_ve_kelimeleri_ekle(dosya_yolu: Path):
         print(f"Hata {dosya_yolu}: {e}")
 
 def main():
-    klasor = Path("kaynak_metnler")
+    # klasor = Path("kaynak_metnler")
+    klasor = Path("/home/axax/Desktop/yz_projeleri/tutanaklar/TBMM_Tutanaklari")
     if not klasor.exists():
         klasor.mkdir()
         print(f"'{klasor}' klasörü oluşturuldu. Lütfen metin dosyalarınızı buraya koyun.")
