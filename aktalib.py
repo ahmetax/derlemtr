@@ -8,7 +8,7 @@ BHARFX = "Iİ"
 KHARFX = "ıi"
 import time
 
-def show_time(message, t1, t0=None):
+def show_time(t1, t0=None):
     """
     Show total elapsed at the end of a process
     t1: start time
@@ -16,18 +16,20 @@ def show_time(message, t1, t0=None):
     """
     now = datetime.datetime.now()
     t2 = time.time()
-    fark = round(t2-t1, 4)
+    fark = round(t2-t1, 2)
     h = int(fark//3600)
     m = int((fark-h*3600)//60)
-    s = round(fark-h*3600-m*60, 4)
+    s = round(fark-h*3600-m*60, 2)
     
-    print(f"{message}: {fark} secs ->  {h}h {m}m {s}s ({now.strftime('%H:%M:%S')})")
+    # print(f"Delta: {fark} secs ->  {h}h {m}m {s}s ({now.strftime('%H:%M:%S')})")
     if t0:
-        fark = round(t2-t0, 4)
-        h = int(fark//3600)
-        m = int((fark-h*3600)//60)
-        s = round(fark-h*3600-m*60, 4)        
-        print(f"Total time: {fark} secs ->  {h}h {m}m {s}s")
+        tfark = round(t2-t0, 2)
+        h = int(tfark//3600)
+        m = int((tfark-h*3600)//60)
+        s = round(tfark-h*3600-m*60, 2)        
+        print(f"Delta: {fark} secs ->  {h}h {m}m {s}s Total: {tfark} secs ->  {h}h {m}m {s}s ({now.strftime('%H:%M:%S')})")
+    else:
+        print(f"Delta: {fark} secs ->  {h}h {m}m {s}s ({now.strftime('%H:%M:%S')})")
     return t2 - t1
 
 def show_time_old(message, t1, t0=None):
@@ -91,11 +93,13 @@ def get_text(filename):
 
 
 if __name__ == "__main__":
-    filename = "aktadata/30006.txt"
-    with open(filename, 'r') as f:
-        content = f.read()
-        trtext = extract_turkish_body(content)
-        print(trtext[:200])
-        print("")
-        print(trtext[-200:])
+    # filename = "aktadata/30006.txt"
+    # with open(filename, 'r') as f:
+    #     content = f.read()
+    #     trtext = extract_turkish_body(content)
+    #     print(trtext[:200])
+    #     print("")
+    #     print(trtext[-200:])
 
+    t0 = t1 = time.time()
+    t1 = show_time("Fark: ", t1,t0)
