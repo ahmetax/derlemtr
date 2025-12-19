@@ -171,18 +171,6 @@ You can add the contents of this file to your master list (tr_lexicon.txt) to be
    python akta_tara.py
    ```
 
-## Adding Words to the sozluk (dictionary) Table
-
-Using the kelimeler table in the lexicon.db database, groups the word roots and transfers them to the dictionary table.
-
-DROPS the old sozluk table to create a clean start, recreates it, and correctly transfers the roots, type, and detail information from the analysis field from the kelimeler (words) table.
-
-MUST BE USED WITH CAUTION! 
-YOU CAN LOSE SOME VALUABLE DATA!
-
-```bash
-python lexicon_initializer.py
-```
 ## Adding Geographic Location Names to the Dictionary
 
 ### geocoding_adres.py
