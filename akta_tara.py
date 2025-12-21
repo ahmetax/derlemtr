@@ -199,47 +199,6 @@ def calculate_ratios(word: str) -> Tuple[float, float]:
 
 # ... (Fonksiyonun başı aynı kalır)
 
-def check_word_candidate_iptal(word: str) -> bool: # Artık sadece bool döndürüyor
-    """
-    Bir kelimenin Türkçe olma olasılığını kontrol eder. Sadece KESİN ise True döndürür.
-    """
-    word = word.strip().lower()
-    if len(word) < 4:
-        return False # Artık 'YOK' yerine False döndürüyor
-
-    ot_ratio, oy_ratio = calculate_ratios(word)
-    
-    # 1. Yabancı Harf Kontrolü
-    if oy_ratio > OY_UST_ESIK:
-        return False
-
-    # 2. Morfolojik Analiz (KESİN Aday Kontrolü)
-    is_zemberek_approved = False
-    
-    if GLOBAL_MORPHOLOGY:
-        # ... (Morfolojik analiz lojiği aynı kalır) ...
-        # is_zemberek_approved = True olarak ayarlanırsa:
-
-        if is_zemberek_approved:
-            
-            # **FİLTRE 1: ARDIŞIK ÜNLÜ KONTROLÜ**
-            if check_consecutive_vowels(word, max_vowels=2):
-                return False # KESİN değil (OLASI'ya gerek yok, elendi)
-                
-            # **FİLTRE 2: 3-GRAM KONTROLÜ**
-            trigram_score = calculate_trigram_score(word)
-            
-            if trigram_score > TRGRAM_ALT_ESIK:
-                return True # KESİN ONAYLANDI
-            else:
-                return False # KESİN değil (OLASI'ya gerek yok, elendi)
-
-    # 3. Harf Oranları Kontrolü (Eski OLASI Kontrolü)
-    # Yeni düzende OLASI istemediğiniz için, bu bloğu da False döndürecek şekilde düzenliyoruz
-    # if ot_ratio >= OT_ALT_ESIK or oy_ratio < 0.001:
-    #     return False # Artık OLASI sonuçları istemiyoruz
-
-    return False # KESİN değilse, daima False döndür
 
 def check_word_candidate(word: str) -> bool: # Sadece bool döndürüyor (True: KESİN, False: YOK/OLASI)
     """
