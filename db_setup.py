@@ -46,9 +46,46 @@ def create_tables():
         );
     ''')
     
+# 3. Kaynaklar Tablosu (Eklendi)
+    cursor.execute('''
+        CREATE TABLE IF NOT EXISTS kaynaklar (
+            id INTEGER PRIMARY KEY,
+            adres TEXT NOT NULL UNIQUE, -- URL veya Dosya Yolu
+            ad TEXT,
+            checksum TEXT, 
+            kayit_tarihi DATETIME
+        );
+    ''')
+
+    # 4. Kelime-Kaynak İlişki Tablosu (Eklendi)
+    cursor.execute('''
+        CREATE TABLE IF NOT EXISTS kelime_kaynak (
+            kelime_id INTEGER,
+            kaynak_id INTEGER,
+            FOREIGN KEY (kelime_id) REFERENCES kelimeler(id),
+            FOREIGN KEY (kaynak_id) REFERENCES kaynaklar(id),
+            UNIQUE (kelime_id, kaynak_id)
+        );
+    ''')
+
+    # 5. Endeksler (executescript ile toplu ve güvenli oluşturma)
+    cursor.executescript('''
+        CREATE UNIQUE INDEX IF NOT EXISTS idx_kaynaklar_adres ON kaynaklar (adres);
+        CREATE INDEX IF NOT EXISTS idx_kelimeler_detay ON kelimeler (detay);
+        CREATE INDEX IF NOT EXISTS idx_kelimeler_hata ON kelimeler (hata);
+        CREATE INDEX IF NOT EXISTS idx_kelimeler_kelime ON kelimeler(kelime);
+        CREATE INDEX IF NOT EXISTS idx_kelimeler_kok ON kelimeler (kok);
+        CREATE INDEX IF NOT EXISTS idx_kelimeler_lemma ON kelimeler (lemma);
+        CREATE INDEX IF NOT EXISTS idx_kelimeler_onay ON kelimeler (onay);
+        CREATE INDEX IF NOT EXISTS idx_kelimeler_skor ON kelimeler (skor);
+        CREATE INDEX IF NOT EXISTS idx_kelimeler_tip ON kelimeler (tip);
+        CREATE INDEX IF NOT EXISTS idx_kk_kaynak_id ON kelime_kaynak (kaynak_id);
+        CREATE INDEX IF NOT EXISTS idx_kk_kelime_id ON kelime_kaynak (kelime_id);
+    ''')
+    
     conn.commit()
     conn.close()
-    print(f"'{DATABASE_NAME}' veritabanı ve tablolar başarıyla oluşturuldu/güncellendi.")
+    print(f"'{DATABASE_NAME}' veritabanı, tablolar ve endeksler başarıyla hazırlandı.")
 
 if __name__ == '__main__':
     create_tables()
