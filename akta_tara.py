@@ -259,46 +259,6 @@ def check_word_candidate(word: str) -> bool: # Sadece bool döndürüyor (True: 
     # 3. Zemberek onaylamazsa veya kural dışı kalırsa (Eski OLASI adayı olsa bile)
     return False # Artık OLASI sonuçları istemediğiniz için her zaman False
 
-def metin_dosyasindan_kelime_ayikla_iptal(file_path: str, lexicon: Set[str], pool: mp.Pool) -> Set[str]:
-    """
-    Tek bir metin dosyasından kelimeleri ayıklar ve kontrol eder.
-    Sadece 'KESİN' Türkçe adaylarını içeren bir set döndürür.
-    """
-    all_words = set()
-    kesin_adaylar = set()
-    
-    # 1. Dosyadan kelimeleri oku (UTF-8 dönüşümünden sonra bu kısım sorunsuz olmalı)
-    try:
-        # errors='ignore' kullanmaya devam ediyoruz, ek güvenlik sağlar
-        with open(file_path, 'r', encoding='utf-8', errors='ignore') as f:
-            for line in tqdm(f, desc=f"Dosya Okuma: {os.path.basename(file_path)}"):
-                # ... (Kelimeleri ayırma lojiği aynı kalır)
-                words = re.findall(r'[a-zçğıiöşü]+', line.lower())
-                all_words.update(words)
-                
-    except Exception as e:
-        print(f"UYARI: {file_path} dosyası okuma/ayrıştırma hatası: {e}")
-        return set() # Hata durumunda boş küme döndür
-
-    # 2. Daha önce taranmış/mevcut kelimeleri ele
-    new_words = all_words.difference(lexicon)
-
-    # 3. Multiprocessing ile kontrol
-    chunk_size = 500
-    word_list = list(new_words)
-    
-    # Check_word_candidate fonksiyonu artık sadece KESİN ise True dönecek şekilde revize edildi.
-    results = pool.map(check_word_candidate, word_list, chunksize=chunk_size)
-    
-    # Sonuçları topla: Sadece KESİN olarak True dönenleri al
-    for word, is_kesin in zip(word_list, results):
-        if is_kesin:
-            kesin_adaylar.add(word)
-
-    print(f"Kontrol Edilen Benzersiz Kelime Sayısı: {len(new_words):,}")
-    print(f"Yeni KESİN Aday (Dosya): {len(kesin_adaylar):,}")
-    
-    return kesin_adaylar # Sadece KESİN setini döndür
 
 def metin_dosyasindan_kelime_ayikla(file_path: str, lexicon: Set[str], pool: mp.Pool) -> Set[str]:
     """
@@ -363,14 +323,6 @@ def dosyaya_yaz_optimizeli(candidates: Dict[str, Set[str]]):
         print(f"UYARI: {KESIN_TURKCE_CIKTI} dosyası işlenirken beklenmedik hata oluştu: {e}")
         return {'KESIN': set(), 'OLASI': set()}
     
-    # try:
-    #     # Olası adayları yaz
-    #     with open(OLASI_TURKCE_CIKTI, 'a', encoding='utf-8', errors='ignore') as f:
-    #         print(f"'{len(candidates['OLASI']):,}' olası adayı yazılıyor...")
-    #         f.write('\n'.join(sorted(candidates['OLASI'])) + '\n')
-    # except Exception as e:
-    #     print(f"UYARI: {OLASI_TURKCE_CIKTI} dosyası işlenirken beklenmedik hata oluştu: {e}")
-    #     return {'KESIN': set(), 'OLASI': set()}
 
 def sonuclari_kaydet(candidates: Set[str], file_path: str):
     """
