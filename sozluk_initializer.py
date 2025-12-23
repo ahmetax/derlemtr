@@ -31,7 +31,7 @@ def ensure_sozluk_table_exists_and_is_up_to_date(cursor):
             attempted INTEGER DEFAULT 0, 
             failed INTEGER DEFAULT 0,
             onay INTEGER DEFAULT 0,
-            UNIQUE(kok, tip) 
+            UNIQUE(kok, tip, koken) 
         );
     ''')
     
