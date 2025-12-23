@@ -195,35 +195,6 @@ def analyze_word_with_trmorph(word: str) -> Optional[Tuple]:
         print(f"UYARI: Tr-Morph analizinde hata ({word}): {e}", file=sys.stderr)
         return (word, "", "", "", f"HATA: Tr-Morph İşlem Hatası ({type(e).__name__})", "trmorph_hata")
 
-# --- KULLANIM ÖRNEĞİ (Test) ---
-# if __name__ == '__main__':
-#     print(f"-> TRMORPH_FST_PATH: {TRMORPH_FST_PATH}")
-    
-#     test_words = ["okuyacaktım", "gözlemciliklerindendi", "bilgisayar", "xxxxxyyyyy"]
-#     test_words = ["afsunlanmışçasına"]
-    
-#     for word in test_words:
-        
-#         # 1. Fonksiyonu çağır ve sonucu bir değişkene kaydet
-#         result_tuple = analyze_word_with_trmorph(word)
-        
-#         print(f"\nKelime: {word}")
-        
-#         # 2. Sonucun 'None' olup olmadığını kontrol et
-#         if result_tuple:
-#             # Başarılı: Tuple'ı güvenle aç (unpack)
-#             kelime, lemma, kok, ekler, analiz_tam, yontem = result_tuple
-            
-#             print(f"  Sonuç: Başarılı")
-#             print(f"  Kök:   {kok}")
-#             print(f"  Lemma:   {lemma}")
-#             print(f"  Ekler:   {ekler}")
-#             print(f"  Analiz: {analiz_tam}")
-#         else:
-#             # Başarısız: None sonucu işlenir
-#             print("  Sonuç: Tanınmadı")
-
-
 def interactive_mode():
     """Kullanıcıdan girdi alarak sürekli analiz yapan ana döngü."""
     
