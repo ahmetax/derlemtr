@@ -45,58 +45,6 @@ def parse_trmorph_analysis(analysis_line: str) -> Optional[Tuple[str, str, str]]
     
     return (root, ekler, analiz_tam)
 
-
-def extract_surface_morphemes_old(word: str, root: str) -> str:
-    """
-    Kök ve kelime arasındaki farkı kullanarak eklerin yüzey formunu tahmin eder.
-    
-    Args:
-        word (str): Orijinal kelime (örn: 'okuyacaktım')
-        root (str): Morfolojik kök (örn: 'oku')
-        
-    Returns:
-        str: Eklerin yüzey formu (örn: '(yacak-tı-m)')
-    """
-    
-    # Kök ve Kelime Uzunluğu Kontrolü
-    if len(root) > len(word):
-        return "(HATA: Kök kelimeden uzun)"
-
-    # Tr-Morph kökü, orijinal kelimenin başında yer almak zorunda değildir (ünlü düşmesi/türevi olabilir)
-    
-    # 1. Kökün Yüzey Formunu Tahmin Etme:
-    #   Tr-Morph kökünü kullanarak kelimenin başlangıcında kök yüzey formunu bulmaya çalışalım.
-    #   Örn: "gözlemciliklerindendi" -> Kök: "gözlem"
-    
-    root_len = len(root)
-    
-    # Eğer kelime, kök ile başlıyorsa (en basit durum)
-    if word.startswith(root):
-        surface_root = root
-    else:
-        # Yumuşama/Düşme kontrolü: 
-        # İlk başta eşleşmeyen ama muhtemel yüzey formu
-        surface_root = word[:root_len] 
-        
-        # Eğer kök tam olarak kelimenin başında değilse (örn: 'git' -> 'gid') 
-        # burada kök yüzey formunun uzunluğunu doğru ayarlamamız gerekir.
-        # Basitçe, Zemberek gibi yapalım: Yüzey kökü kelimenin en başında varsayalım.
-        
-    # 2. Eklerin Yüzey Formunu Çıkarma
-    # Kelimenin geri kalan kısmı eklerin yüzey formudur.
-    surface_affixes = word[len(surface_root):]
-    
-    # 3. Yüzey Eklerini, Tr-Morph etiketleriyle eşleştirmek çok karmaşıktır.
-    # Bu yüzden sadece yüzey ekini '-' ile ayırılmış olarak döndürelim (Zemberek stilinde).
-    
-    # Geçici çözüm: Yüzey eklerini tek bir string olarak döndürmek
-    
-    # NOT: Türkçe'de eklerin yüzey formu, her zaman kök uzunluğundan hemen sonra başlamaz
-    # (örn: "o" -> "onun"). Bu, basit bir string manipülasyonu ile çözülebilecek bir sorun değildir.
-    # Ancak Foma çıktısını yorumlamak için, eklerin *tam* yüzeyini alabiliriz.
-    
-    return f"({surface_affixes})" if surface_affixes else ""
-
 def extract_surface_morphemes(word: str, root: str) -> str:
     """
     Kök ve kelime arasındaki farkı kullanarak eklerin yüzey formunu tahmin eder
