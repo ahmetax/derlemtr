@@ -150,11 +150,7 @@ def main():
     for chunk_file in chunk_files:
         process_chunk_and_load(chunk_file, num_processes, batch_size=5000)
 
-    # 2. Analiz tamamlandıktan sonra TSV'den veritabanına yükleme işlemini db_loader.py ile yapacağız.
-    # total_imported = db_manager.import_tsv_to_db()
-
     print(f"\n\n🎉 TÜM İŞLEMLER BAŞARIYLA TAMAMLANDI!")
-    # print(f"   Analiz edilen toplam kelime: {total_imported}")
 
 
 if __name__ == "__main__":
