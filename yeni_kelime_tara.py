@@ -357,6 +357,7 @@ def main(target: str, mode: str):
             
             # Ana bellekte adayları birleştir
             final_candidates['KESIN'].update(new_candidates['KESIN'])
+            # OLASI adaylar aslında çok kirli. Dikkate almaya gerek yok...
             final_candidates['OLASI'].update(new_candidates['OLASI'])
             
             # Burası aralıklı yazma noktasıdır (Dosya bazında yazma)

@@ -137,9 +137,6 @@ def main():
     num_processes = min(cpu_count(), 6) 
     print(f"Sistem CPU Sayısı: {cpu_count()}. Kullanılan İşçi Sayısı: {num_processes}.")
     
-    db_manager = DBManager(db_path='lexicon.db')
-    db_manager.setup_database() 
-
     # 1. Analiz ve TSV Dosyasına Yazma
     chunk_files = sorted(glob.glob('chunk_*.txt'))
     
