@@ -11,6 +11,19 @@ TRMORPH_FST_PATH = os.path.abspath('./trmorph.fst')
 FLOOKUP_EXEC_PATH = 'flookup' # 'flookup' komutunun sistem PATH'inde olduğunu varsayıyoruz
 USE_HYPHEN = False # Görsel okunabilirlik için '-' ekler
 
+def get_mastar_eki(root):
+    """Kökün son ünlüsüne göre 'mak' veya 'mek' döner."""
+    kalin_unluler = 'aıou'
+    ince_unluler = 'eiöü'
+    
+    # Kökü sondan başa tarayarak ilk bulduğumuz ünlüyü baz alıyoruz
+    for char in reversed(root.lower()):
+        if char in kalin_unluler:
+            return "mak"
+        if char in ince_unluler:
+            return "mek"
+    return "mak" # Ünlü bulunamazsa varsayılan
+
 # --- ANALİZ FONKSİYONU ---
 
 def parse_trmorph_analysis(analysis_line: str) -> Optional[Tuple[str, str, str]]:
@@ -20,30 +33,83 @@ def parse_trmorph_analysis(analysis_line: str) -> Optional[Tuple[str, str, str]]
     
     # Kelime ve analiz kısmını ayırmak için \t kullan
     parts = analysis_line.split('\t')
-    if len(parts) < 2:
-        return None
+    if len(parts) < 2 or parts[1].strip() == '+?':
+        return None        
     
     # Analiz stringi (örn: oku<V><cv:ye><Adv><0><N><dim><N><0><V><cpl:past><1s>)
     morph_string = parts[1].strip()
-
-    # YENİ KONTROL: Eğer analiz tanınmadıysa (+?) kontrolü
-    if morph_string == '+?':
-        return None # Bu kelimeyi analiz edemediğimizi belirtmek için None döndür
-
+    # print(f"morph_string: {morph_string}")
+    
     # Kökü çıkarmak için ilk morfolojik etiketi bul
     # Desen: Kökü, ardından gelen ilk açılı etiketi bulur.
-    match = re.match(r'(.+?)<[A-Za-z]+?:?.*?>', morph_string)
+    # match = re.match(r'(.+?)<[A-Za-z]+?:?.*?>', morph_string)
+    match = re.match(r'.+?<([A-Za-z]+?)>', morph_string)
+    # print(f"match: {match}")
+    tip = match.group(1) if match else "Unknown"
+    # print(f"tip: {tip}")
     
-    if match:
-        root = match.group(1)
-    else:
-        # Eğer morfolojik etiket yoksa (örn: bilgisayar<N> gibi)
-        root = morph_string.split('<')[0] 
+    # Tip dönüşümlerini burada yapabiliriz
+    tag_map = {'N': 'Noun', 'V': 'Verb', 'Adj': 'Adj', 'Adv': 'Adv', 'Ij': 'Interj'}
+    tip_full = tag_map.get(tip, tip)
+    # print(f"tip_full: {tip_full}")
+
+    # Kökü bul
+    root_match = re.match(r'(.+?)<', morph_string)
+    root = root_match.group(1) if root_match else morph_string.split('<')[0]
+
+    return (root, tip_full, morph_string) # (root, tip, analiz)
+
+
+def extract_surface_morphemes_old(word: str, root: str) -> str:
+    """
+    Kök ve kelime arasındaki farkı kullanarak eklerin yüzey formunu tahmin eder.
+    
+    Args:
+        word (str): Orijinal kelime (örn: 'okuyacaktım')
+        root (str): Morfolojik kök (örn: 'oku')
         
-    ekler = "" 
-    analiz_tam = morph_string
+    Returns:
+        str: Eklerin yüzey formu (örn: '(yacak-tı-m)')
+    """
     
-    return (root, ekler, analiz_tam)
+    # Kök ve Kelime Uzunluğu Kontrolü
+    if len(root) > len(word):
+        return "(HATA: Kök kelimeden uzun)"
+
+    # Tr-Morph kökü, orijinal kelimenin başında yer almak zorunda değildir (ünlü düşmesi/türevi olabilir)
+    
+    # 1. Kökün Yüzey Formunu Tahmin Etme:
+    #   Tr-Morph kökünü kullanarak kelimenin başlangıcında kök yüzey formunu bulmaya çalışalım.
+    #   Örn: "gözlemciliklerindendi" -> Kök: "gözlem"
+    
+    root_len = len(root)
+    
+    # Eğer kelime, kök ile başlıyorsa (en basit durum)
+    if word.startswith(root):
+        surface_root = root
+    else:
+        # Yumuşama/Düşme kontrolü: 
+        # İlk başta eşleşmeyen ama muhtemel yüzey formu
+        surface_root = word[:root_len] 
+        
+        # Eğer kök tam olarak kelimenin başında değilse (örn: 'git' -> 'gid') 
+        # burada kök yüzey formunun uzunluğunu doğru ayarlamamız gerekir.
+        # Basitçe, Zemberek gibi yapalım: Yüzey kökü kelimenin en başında varsayalım.
+        
+    # 2. Eklerin Yüzey Formunu Çıkarma
+    # Kelimenin geri kalan kısmı eklerin yüzey formudur.
+    surface_affixes = word[len(surface_root):]
+    
+    # 3. Yüzey Eklerini, Tr-Morph etiketleriyle eşleştirmek çok karmaşıktır.
+    # Bu yüzden sadece yüzey ekini '-' ile ayırılmış olarak döndürelim (Zemberek stilinde).
+    
+    # Geçici çözüm: Yüzey eklerini tek bir string olarak döndürmek
+    
+    # NOT: Türkçe'de eklerin yüzey formu, her zaman kök uzunluğundan hemen sonra başlamaz
+    # (örn: "o" -> "onun"). Bu, basit bir string manipülasyonu ile çözülebilecek bir sorun değildir.
+    # Ancak Foma çıktısını yorumlamak için, eklerin *tam* yüzeyini alabiliriz.
+    
+    return f"({surface_affixes})" if surface_affixes else ""
 
 def extract_surface_morphemes(word: str, root: str) -> str:
     """
@@ -88,7 +154,7 @@ def extract_surface_morphemes(word: str, root: str) -> str:
 def analyze_word_with_trmorph(word: str) -> Optional[Tuple]:
     """
     Verilen kelimeyi Foma (flookup) aracılığıyla analiz eder ve sonuçları döndürür.
-    Dönüş formatı: (kelime, lemma, kok, ekler, analiz, yontem)
+    Dönüş formatı: (kelime, lemma, kok, ekler, analiz, yontem, tip, detay)
     """
     
     word = word.strip().lower()
@@ -127,21 +193,27 @@ def analyze_word_with_trmorph(word: str) -> Optional[Tuple]:
         if not parsed_data:
             return None 
 
-        root, _, analiz_tam = parsed_data # İkinci alan (eski ekler) artık kullanılmıyor.
+        root, tip, analiz_tam = parsed_data # İkinci alan (eski ekler) artık kullanılmıyor.
         
         # YENİ: Yüzey eklerini tahmin et
         ekler = extract_surface_morphemes(word, root) # <-- Yeni fonksiyon çağrıldı
 
         # kelime, lemma, kok, ekler, analiz, yontem
         # Lemma'yı kök olarak varsayalım
-        return (word, root, root, ekler, analiz_tam, "trmorph")
+        detay = root	# Şimdilik bu şekilde. Verb olunca mak/mek eklenecek
+        if tip == 'Verb':
+            mastar = get_mastar_eki(root)
+            detay = f"{root}{mastar}" 
+        return (word, root, root, ekler, analiz_tam, "trmorph", tip, detay)
         
     except FileNotFoundError:
         print(f"KRİTİK HATA: 'flookup' veya '{TRMORPH_FST_PATH}' yolu bulunamadı.", file=sys.stderr)
         sys.exit(1)
     except Exception as e:
         print(f"UYARI: Tr-Morph analizinde hata ({word}): {e}", file=sys.stderr)
-        return (word, "", "", "", f"HATA: Tr-Morph İşlem Hatası ({type(e).__name__})", "trmorph_hata")
+        return (word, "", "", "", f"HATA: Tr-Morph İşlem Hatası ({type(e).__name__})", "trmorph_hata","","")
+
+# --- KULLANIM ÖRNEĞİ (Test) ---
 
 def interactive_mode():
     """Kullanıcıdan girdi alarak sürekli analiz yapan ana döngü."""
@@ -164,14 +236,15 @@ def interactive_mode():
             # results = analyze_batch(words_to_analyze)
             if result_tuple:
                 # Başarılı: Tuple'ı güvenle aç (unpack)
-                kelime, lemma, kok, ekler, analiz_tam, yontem = result_tuple
+                kelime, lemma, kok, ekler, analiz_tam, yontem, tip, detay = result_tuple
                 
-                print(f"  Sonuç: Başarılı")
-                print(f"  Kök:   {kok}")
-                print(f"  Lemma:   {lemma}")
-                print(f"  Ekler:   {ekler}")
-                print(f"  Analiz: {analiz_tam}")
-                print(f"  Yöntem: {yontem}")
+                print(f"  Kök\t\t: {kok}")
+                print(f"  Lemma\t\t: {lemma}")
+                print(f"  Ekler\t\t: {ekler}")
+                print(f"  Analiz\t: {analiz_tam}")
+                print(f"  Yöntem\t: {yontem}")
+                print(f"  Tip\t\t: {tip}")
+                print(f"  Detay\t\t: {detay}")
             else:
                 # Başarısız: None sonucu işlenir
                 print("  Sonuç: Tanınmadı")            
