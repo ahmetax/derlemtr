@@ -191,6 +191,15 @@ Input: cografi_adres_sozluk.json
 python geo_bulk_aktarim.py
 ```
 
+## IMPORTANT CHANGE
+
+The analysis of words in the word table is primarily done with Zemberek.
+I had used the TRMORPH system to review words that could not be analyzed by Zemberek.
+Unfortunately, the results I obtained led to the creation of many records that were open to debate and ambiguous.
+Consequently, I saw that these results would not directly contribute to the project and I disabled TRMORPH analyses.
+However, I am not removing the trmorph.py application from the project. Those who wish can continue to use this tool. (December 27, 2025)
+
+
 
 # DENETLENMİŞ TÜRKÇE SÖZCÜK DAĞARCIĞI
 
@@ -408,5 +417,17 @@ bu betik sayesinde aktarılmaktadır.
    python geo_bulk_aktarim.py
    ```	
 
+## ÖNEMLİ BİR DEĞİŞİKLİK
+
+kelimeler tablosundaki kelimelerin analizi temel olarak 
+Zemberek ile yapılıyor. Zemberek tarafından analizi yapılamayan
+kelimelerin elden geçirilmesi için TRMORPH sistemine başvurmuştum.
+Ne yazık ki elde ettiğim sonuçlar tartışmaya açık ve belirsiz çok
+sayıda kaydın oluşmasına neden oldu.
+Sonuç itibariyle, bu sonuçların projeye doğrudan katkı sağlamayacağını
+gördüm ve TRMORPH analizlerini devre dışı bıraktım.
+Buna rağmen, trmorph.py uygulamasını projeden çıkarmıyorum. İsteyenler
+bu araçtan yararlanmaya devam edebilir.
+(27 Aralık 2025)
 
 
