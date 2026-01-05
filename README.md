@@ -207,23 +207,36 @@ Last week I discovered two more new data sources. Claude suggested them. Both so
 ### CULTURAX
 
 Source address: https://huggingface.co/datasets/uonlp/CulturaX
+
 A multilingual dataset.
+
 Total size: 17.4 TB
+
 Total number of tokens: 6.3 Trillion
+
 Number of rows: 7,180,782,601
+
 Number of languages: 167
+
 Number of Turkish documents: 94,207,460
+
 Number of Turkish tokens: 64,292,787,164
+
 Percentage of Turkish tokens: 1.02%
+
 
 ### CULTURAX-TURKISH
 
 Source address: https://huggingface.co/datasets/oriental-lab/CulturaX-turkish
+
 Completely in Turkish.
+
 Total size: 21.1 GB (Actual size 33 GB)
+
 Total number of rows: 11,039,789
 
 Both sources are compiled from various Turkish web sources.
+
 
 
 
@@ -464,22 +477,35 @@ Her iki kaynak da HuggingFace sisteminde yer alıyor.
 ### CULTURAX
 
 Kaynak adresi: https://huggingface.co/datasets/uonlp/CulturaX
+
 Çok dilli bir veriseti.
+
 Toplam büyüklük: 17.4 TB
+
 Toplam token sayıs: 6.3 Trillion
+
 Satır sayısı: 7,180,782,601
+
 Dil sayısı : 167
+
 Türkçe belge sayısı: 94,207,460
+
 Türkçe token sayısı: 64,292,787,164
+
 Türkçe token yüzdesi: % 1.02
+
 
 ### CULTURAX-TURKISH
 
 Kaynak adresi: https://huggingface.co/datasets/oriental-lab/CulturaX-turkish
+
 Tamamen Türkçe.
+
 Toplam büyüklük: 21.1 GB (Gerçek büyük lük 33 GB)
+
 Toplam satır sayısı: 11,039,789
 
 Her iki kaynak da çeşitli Türkçe web kaynaklarından derlenmiş.
+
 
 
