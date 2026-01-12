@@ -96,34 +96,6 @@ def analyze_word(word: str) -> Optional[Tuple]:
         print(f"UYARI: '{word}' kelimesi analiz edilirken hata oluştu: {type(e).__name__}", file=sys.stderr)
         return None
 
-def ensure_kelimeler_table_exists():
-    """'kelimeler' tablosunu db_loader.py şemasına göre oluşturur (Yoksa)."""
-    script = """
-        CREATE TABLE IF NOT EXISTS kelimeler (
-            id INTEGER PRIMARY KEY,
-            kelime TEXT NOT NULL UNIQUE,
-            lemma TEXT,
-            kok TEXT,
-            ekler TEXT,
-            analiz TEXT,
-            yontem TEXT,
-            aciklama TEXT,
-            onay INTEGER DEFAULT 0,
-            hata INTEGER DEFAULT 0,
-            tip TEXT,
-            detay TEXT,
-            skor INTEGER DEFAULT 0,
-            CHECK (LENGTH(kelime) > 0)
-        );
-    """
-    try:
-        with sqlite3.connect(DATABASE_NAME) as conn:
-            conn.cursor().executescript(script)
-        # print("-> 'kelimeler' tablosu hazır.")
-    except sqlite3.Error as e:
-        print(f"HATA: Veritabanı kurulum hatası: {e}", file=sys.stderr)
-        sys.exit(1)
-
 # --- ANA AKIŞ ---
 
 def main():
@@ -151,8 +123,7 @@ def main():
         print(f"HATA: Giriş dosyası okunurken sorun oluştu: {e}", file=sys.stderr)
         return
 
-    # 3. Veritabanı Kurulumu
-    ensure_kelimeler_table_exists()
+    # 3. Veritabanı Kurulumu yapılmış durumda
 
     # 4. Analiz ve Toplu Veri Toplama
     print("-> Zemberek analizleri başlıyor ve veriler toplanıyor...")
