@@ -6,7 +6,6 @@ import time, datetime
 
 BHARFX = "Iİ"
 KHARFX = "ıi"
-import time
 
 def show_time(t1, t0=None):
     """
