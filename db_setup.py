@@ -81,6 +81,11 @@ def create_tables():
         CREATE INDEX IF NOT EXISTS idx_kelimeler_tip ON kelimeler (tip);
         CREATE INDEX IF NOT EXISTS idx_kk_kaynak_id ON kelime_kaynak (kaynak_id);
         CREATE INDEX IF NOT EXISTS idx_kk_kelime_id ON kelime_kaynak (kelime_id);
+        CREATE INDEX IF NOT EXISTS idx_sozluk_kok ON sozluk(kok);
+        CREATE INDEX IF NOT EXISTS idx_sozluk_detay ON sozluk(detay);
+        CREATE INDEX IF NOT EXISTS idx_sozluk_tip ON sozluk(tip);
+        CREATE INDEX IF NOT EXISTS idx_sozluk_dil ON sozluk(dil);
+        CREATE INDEX IF NOT EXISTS idx_sozluk_onay ON sozluk(onay);
     ''')
     
     conn.commit()
