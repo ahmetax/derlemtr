@@ -8,7 +8,7 @@ from typing import List, Set, Dict, Tuple
 from tqdm import tqdm # İlerleme çubuğu için
 import itertools # İlerlemeyi daha iyi yönetmek için
 import math
-from aktalib import extract_turkish_body
+from tr_core.io_utils import extract_turkish_body, get_files_from_folder
 
 # Zemberek importu ve başlatılması
 # DİKKAT: Zemberek'in her alt süreçte (child process) yeniden başlatılması gerekir.
@@ -66,14 +66,6 @@ def get_files_from_db(db_path: str) -> List[str]:
         print(f"Genel hata: {e}")
     return file_paths
 
-def get_files_from_folder(folder_path: str, extensions: Tuple[str] = ('.txt', '.doc', '.pdf')) -> List[str]:
-    """Bir klasördeki (alt klasörler dahil) metin dosyalarını bulur."""
-    file_paths = []
-    for root, _, files in os.walk(folder_path):
-        for file in files:
-            if file.lower().endswith(extensions):
-                file_paths.append(os.path.join(root, file))
-    return file_paths
 
 # --- Yeni Ardışık Ünlü Kontrol Fonksiyonu ---
 def check_consecutive_vowels(word: str, max_vowels: int = 2) -> bool:
@@ -196,8 +188,6 @@ def calculate_ratios(word: str) -> Tuple[float, float]:
     foreign_char_count = sum(only_letters.count(c) for c in FOREIGN_CHARS)
     
     return turkce_char_count / total_letter_count, foreign_char_count / total_letter_count
-
-# ... (Fonksiyonun başı aynı kalır)
 
 
 def check_word_candidate(word: str) -> bool: # Sadece bool döndürüyor (True: KESİN, False: YOK/OLASI)
@@ -322,7 +312,6 @@ def dosyaya_yaz_optimizeli(candidates: Dict[str, Set[str]]):
     except Exception as e:
         print(f"UYARI: {KESIN_TURKCE_CIKTI} dosyası işlenirken beklenmedik hata oluştu: {e}")
         return {'KESIN': set(), 'OLASI': set()}
-    
 
 def sonuclari_kaydet(candidates: Set[str], file_path: str):
     """
