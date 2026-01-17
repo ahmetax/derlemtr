@@ -285,6 +285,7 @@ class TurkishDictionaryEnricher:
                 WHERE (koken IS NULL OR koken = '')
                   AND (attempted = 0 OR attempted IS NULL)
                   AND (failed = 0 OR failed IS NULL)
+                  AND (onay=0)
                 ORDER BY id
             """
         else:
@@ -293,6 +294,7 @@ class TurkishDictionaryEnricher:
                 WHERE ((anlam IS NULL OR anlam = '') OR (koken IS NULL OR koken = ''))
                   AND (attempted = 0 OR attempted IS NULL)
                   AND (failed = 0 OR failed IS NULL)
+                  AND (onay=0)
                 ORDER BY id
             """
         if limit:
@@ -329,6 +331,8 @@ class TurkishDictionaryEnricher:
                         new_kaynak = f"{current_kaynak}, {kaynak}"
                 updates.append("kaynak = ?")
                 params.append(new_kaynak)
+                updates.append("onay = ?")
+                params.append(1)
             if attempted is not None:
                 updates.append("attempted = ?")
                 params.append(attempted)
@@ -390,6 +394,7 @@ class TurkishDictionaryEnricher:
         cursor.execute("SELECT COUNT(*) FROM sozluk WHERE (koken IS NULL OR koken = '') AND (attempted = 0 OR attempted IS NULL) AND (failed = 0 OR failed IS NULL)"); stats['koken_pending'] = cursor.fetchone()[0]
         cursor.execute("SELECT COUNT(*) FROM sozluk WHERE ((anlam IS NULL OR anlam = '') OR (koken IS NULL OR koken = '')) AND (attempted = 0 OR attempted IS NULL) AND (failed = 0 OR failed IS NULL)"); stats['pending'] = cursor.fetchone()[0]
         cursor.execute("SELECT COUNT(*) FROM sozluk WHERE failed = 1"); stats['failed_count'] = cursor.fetchone()[0]
+        cursor.execute("SELECT COUNT(*) FROM sozluk WHERE onay = 0"); stats['unapproved'] = cursor.fetchone()[0]
 
         cursor.execute("SELECT kaynak, COUNT(*) FROM sozluk WHERE kaynak IS NOT NULL AND kaynak != '' GROUP BY kaynak ORDER BY 2 DESC")
         stats['kaynak_dagilim'] = {k: c for k, c in cursor.fetchall()}
@@ -469,6 +474,7 @@ def main():
             logger.info(f"Köken: {stats['koken_dolu']} (%{stats['koken_dolu']*100/stats['toplam']:.1f})")
             logger.info(f"Eksik: {stats['eksik']} | Pending: {stats['pending']} | Köken Pending: {stats['koken_pending']}")
             logger.info(f"Başarısız: {stats['failed_count']}")
+            logger.info(f"Onaysız: {stats['unapproved']}")
             if stats['kaynak_dagilim']:
                 logger.info("Kaynak Dağılımı:")
                 for k, c in stats['kaynak_dagilim'].items():
@@ -497,9 +503,14 @@ def main():
             if choice in ('1', '2'):
                 mode = 'full' if choice == '1' else 'nisanyan'
                 workers = 2 if mode == 'nisanyan' else 3
+                total_count=0
                 while True:
                     enricher.process_batch(batch_size=50, max_workers=workers, mode=mode)
+                    total_count+=50
+                    print(f"process_batch tamamlandı- Toplam: {total_count:,}")
                     stats = enricher.get_statistics()
+                    if stats['failed_count'] == 0:
+                        break
                     key = 'koken_pending' if mode == 'nisanyan' else 'pending'
                     if stats[key] == 0:
                         logger.info("TÜM KELİMELER İŞLENDİ!")
