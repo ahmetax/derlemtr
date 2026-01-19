@@ -22,6 +22,7 @@ def create_tables():
             attempted INTEGER DEFAULT 0, 
             failed INTEGER DEFAULT 0,
             onay INTEGER DEFAULT 0,
+            dil TEXT,
             UNIQUE(kok, tip, koken) -- Tekrarlayan kök girişlerini engellemek için (tamamen aynı ise)
         );
     ''')
@@ -42,6 +43,7 @@ def create_tables():
             tip TEXT,	-- from analiz
             detay TEXT,	-- from analiz
             skor INTEGER DEFAULT 0,	-- frequency from related docs
+            dil TEXT,
             CHECK (LENGTH(kelime) > 0)
         );
     ''')
@@ -79,6 +81,7 @@ def create_tables():
         CREATE INDEX IF NOT EXISTS idx_kelimeler_onay ON kelimeler (onay);
         CREATE INDEX IF NOT EXISTS idx_kelimeler_skor ON kelimeler (skor);
         CREATE INDEX IF NOT EXISTS idx_kelimeler_tip ON kelimeler (tip);
+        CREATE INDEX IF NOT EXISTS idx_kelimeler_dil ON kelimeler (dil);
         CREATE INDEX IF NOT EXISTS idx_kk_kaynak_id ON kelime_kaynak (kaynak_id);
         CREATE INDEX IF NOT EXISTS idx_kk_kelime_id ON kelime_kaynak (kelime_id);
         CREATE INDEX IF NOT EXISTS idx_sozluk_kok ON sozluk(kok);
@@ -90,6 +93,7 @@ def create_tables():
     
     conn.commit()
     conn.close()
+    
     print(f"'{DATABASE_NAME}' veritabanı, tablolar ve endeksler başarıyla hazırlandı.")
 
 if __name__ == '__main__':
