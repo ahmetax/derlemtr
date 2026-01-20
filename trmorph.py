@@ -11,19 +11,6 @@ TRMORPH_FST_PATH = os.path.abspath('./trmorph.fst')
 FLOOKUP_EXEC_PATH = 'flookup' # 'flookup' komutunun sistem PATH'inde olduğunu varsayıyoruz
 USE_HYPHEN = False # Görsel okunabilirlik için '-' ekler
 
-def get_mastar_eki(root):
-    """Kökün son ünlüsüne göre 'mak' veya 'mek' döner."""
-    kalin_unluler = 'aıou'
-    ince_unluler = 'eiöü'
-    
-    # Kökü sondan başa tarayarak ilk bulduğumuz ünlüyü baz alıyoruz
-    for char in reversed(root.lower()):
-        if char in kalin_unluler:
-            return "mak"
-        if char in ince_unluler:
-            return "mek"
-    return "mak" # Ünlü bulunamazsa varsayılan
-
 # --- ANALİZ FONKSİYONU ---
 
 def parse_trmorph_analysis(analysis_line: str) -> Optional[Tuple[str, str, str]]:
@@ -33,31 +20,30 @@ def parse_trmorph_analysis(analysis_line: str) -> Optional[Tuple[str, str, str]]
     
     # Kelime ve analiz kısmını ayırmak için \t kullan
     parts = analysis_line.split('\t')
-    if len(parts) < 2 or parts[1].strip() == '+?':
-        return None        
+    if len(parts) < 2:
+        return None
     
     # Analiz stringi (örn: oku<V><cv:ye><Adv><0><N><dim><N><0><V><cpl:past><1s>)
     morph_string = parts[1].strip()
-    # print(f"morph_string: {morph_string}")
-    
+
+    # YENİ KONTROL: Eğer analiz tanınmadıysa (+?) kontrolü
+    if morph_string == '+?':
+        return None # Bu kelimeyi analiz edemediğimizi belirtmek için None döndür
+
     # Kökü çıkarmak için ilk morfolojik etiketi bul
     # Desen: Kökü, ardından gelen ilk açılı etiketi bulur.
-    # match = re.match(r'(.+?)<[A-Za-z]+?:?.*?>', morph_string)
-    match = re.match(r'.+?<([A-Za-z]+?)>', morph_string)
-    # print(f"match: {match}")
-    tip = match.group(1) if match else "Unknown"
-    # print(f"tip: {tip}")
+    match = re.match(r'(.+?)<[A-Za-z]+?:?.*?>', morph_string)
     
-    # Tip dönüşümlerini burada yapabiliriz
-    tag_map = {'N': 'Noun', 'V': 'Verb', 'Adj': 'Adj', 'Adv': 'Adv', 'Ij': 'Interj'}
-    tip_full = tag_map.get(tip, tip)
-    # print(f"tip_full: {tip_full}")
-
-    # Kökü bul
-    root_match = re.match(r'(.+?)<', morph_string)
-    root = root_match.group(1) if root_match else morph_string.split('<')[0]
-
-    return (root, tip_full, morph_string) # (root, tip, analiz)
+    if match:
+        root = match.group(1)
+    else:
+        # Eğer morfolojik etiket yoksa (örn: bilgisayar<N> gibi)
+        root = morph_string.split('<')[0] 
+        
+    ekler = "" 
+    analiz_tam = morph_string
+    
+    return (root, ekler, analiz_tam)
 
 
 def extract_surface_morphemes_old(word: str, root: str) -> str:
@@ -154,7 +140,7 @@ def extract_surface_morphemes(word: str, root: str) -> str:
 def analyze_word_with_trmorph(word: str) -> Optional[Tuple]:
     """
     Verilen kelimeyi Foma (flookup) aracılığıyla analiz eder ve sonuçları döndürür.
-    Dönüş formatı: (kelime, lemma, kok, ekler, analiz, yontem, tip, detay)
+    Dönüş formatı: (kelime, lemma, kok, ekler, analiz, yontem)
     """
     
     word = word.strip().lower()
@@ -193,27 +179,50 @@ def analyze_word_with_trmorph(word: str) -> Optional[Tuple]:
         if not parsed_data:
             return None 
 
-        root, tip, analiz_tam = parsed_data # İkinci alan (eski ekler) artık kullanılmıyor.
+        root, _, analiz_tam = parsed_data # İkinci alan (eski ekler) artık kullanılmıyor.
         
         # YENİ: Yüzey eklerini tahmin et
         ekler = extract_surface_morphemes(word, root) # <-- Yeni fonksiyon çağrıldı
 
         # kelime, lemma, kok, ekler, analiz, yontem
         # Lemma'yı kök olarak varsayalım
-        detay = root	# Şimdilik bu şekilde. Verb olunca mak/mek eklenecek
-        if tip == 'Verb':
-            mastar = get_mastar_eki(root)
-            detay = f"{root}{mastar}" 
-        return (word, root, root, ekler, analiz_tam, "trmorph", tip, detay)
+        return (word, root, root, ekler, analiz_tam, "trmorph")
         
     except FileNotFoundError:
         print(f"KRİTİK HATA: 'flookup' veya '{TRMORPH_FST_PATH}' yolu bulunamadı.", file=sys.stderr)
         sys.exit(1)
     except Exception as e:
         print(f"UYARI: Tr-Morph analizinde hata ({word}): {e}", file=sys.stderr)
-        return (word, "", "", "", f"HATA: Tr-Morph İşlem Hatası ({type(e).__name__})", "trmorph_hata","","")
+        return (word, "", "", "", f"HATA: Tr-Morph İşlem Hatası ({type(e).__name__})", "trmorph_hata")
 
 # --- KULLANIM ÖRNEĞİ (Test) ---
+# if __name__ == '__main__':
+#     print(f"-> TRMORPH_FST_PATH: {TRMORPH_FST_PATH}")
+    
+#     test_words = ["okuyacaktım", "gözlemciliklerindendi", "bilgisayar", "xxxxxyyyyy"]
+#     test_words = ["afsunlanmışçasına"]
+    
+#     for word in test_words:
+        
+#         # 1. Fonksiyonu çağır ve sonucu bir değişkene kaydet
+#         result_tuple = analyze_word_with_trmorph(word)
+        
+#         print(f"\nKelime: {word}")
+        
+#         # 2. Sonucun 'None' olup olmadığını kontrol et
+#         if result_tuple:
+#             # Başarılı: Tuple'ı güvenle aç (unpack)
+#             kelime, lemma, kok, ekler, analiz_tam, yontem = result_tuple
+            
+#             print(f"  Sonuç: Başarılı")
+#             print(f"  Kök:   {kok}")
+#             print(f"  Lemma:   {lemma}")
+#             print(f"  Ekler:   {ekler}")
+#             print(f"  Analiz: {analiz_tam}")
+#         else:
+#             # Başarısız: None sonucu işlenir
+#             print("  Sonuç: Tanınmadı")
+
 
 def interactive_mode():
     """Kullanıcıdan girdi alarak sürekli analiz yapan ana döngü."""
@@ -236,15 +245,14 @@ def interactive_mode():
             # results = analyze_batch(words_to_analyze)
             if result_tuple:
                 # Başarılı: Tuple'ı güvenle aç (unpack)
-                kelime, lemma, kok, ekler, analiz_tam, yontem, tip, detay = result_tuple
+                kelime, lemma, kok, ekler, analiz_tam, yontem = result_tuple
                 
-                print(f"  Kök\t\t: {kok}")
-                print(f"  Lemma\t\t: {lemma}")
-                print(f"  Ekler\t\t: {ekler}")
-                print(f"  Analiz\t: {analiz_tam}")
-                print(f"  Yöntem\t: {yontem}")
-                print(f"  Tip\t\t: {tip}")
-                print(f"  Detay\t\t: {detay}")
+                print(f"  Sonuç: Başarılı")
+                print(f"  Kök:   {kok}")
+                print(f"  Lemma:   {lemma}")
+                print(f"  Ekler:   {ekler}")
+                print(f"  Analiz: {analiz_tam}")
+                print(f"  Yöntem: {yontem}")
             else:
                 # Başarısız: None sonucu işlenir
                 print("  Sonuç: Tanınmadı")            
