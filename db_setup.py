@@ -10,7 +10,7 @@ def create_tables():
     # 1. Sözlük Tablosu
     cursor.execute('''
         CREATE TABLE IF NOT EXISTS sozluk (
-            id INTEGER PRIMARY KEY,
+            id INTEGER PRIMARY KEY AUTOINCREMENT,
             kok TEXT NOT NULL,
             detay TEXT, -- büyük-küçük harf duyarlı
             tip TEXT, -- isim, fiil, ozel_isim, terim, vb.
